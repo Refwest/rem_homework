@@ -1,4 +1,7 @@
 databaseChangeLog:
   - include:
-      file: "version\swiftTable.yaml"
+      file: version/countryTable.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: version/headquarterTable.yaml
       relativeToChangelogFile: true

@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Filip
+      changes:
+        - createTable:
+            remarks: Added bank table
+            schemaName: public
+            tableName: bank
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+              - column:
+                  name: address
+                  type: varchar
+              - column:
+                  name: bank_name
+                  type: varchar
+              - column:
+                  name: country_iso2
+                  type: varchar
+              - column:
+                  name: is_headquarter
+                  type: boolean
+              - column:
+                  name: swift_code
+                  type: varchar
