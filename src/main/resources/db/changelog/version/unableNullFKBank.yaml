@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1738535231868-5
+      author: Filip
+      comment: unable null in foreign key bank - country
+      changes:
+        - addNotNullConstraint:
+            tableName: bank
+            columnName: country_iso2

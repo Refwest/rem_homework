@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1738504828337-3
       author: Filip
+      comment: Import data from csv file and adjust it for database purpose
       changes:
         - loadUpdateData:
             tableName: country

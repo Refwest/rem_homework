@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1738504844528-1
       author: Filip
+      comment: Create table
       changes:
         - createTable:
             tableName: country

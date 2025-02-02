@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1738504849457-2
       author: Filip
+      comment: Create table
       changes:
         - createTable:
             remarks: Added bank table
@@ -41,6 +42,7 @@ databaseChangeLog:
                     foreignKeyName: fk_bank_country
                     referencedTableName: country
                     referencedColumnNames: id
+                    validateForeignKey: true
               - column:
                   name: country_iso2
                   type: varchar(2)
