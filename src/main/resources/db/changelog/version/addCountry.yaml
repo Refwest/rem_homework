@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Filip
+      changes:
+        - loadUpdateData:
+            schemaName: public
+            tableName: country
+            primaryKey: country_iso2
+            file: ../data/Interns_2025_SWIFT_CODES.csv
+            relativeToChangelogFile: true
+            encoding: UTF-8
+            separator: ";"
+            quotchar: '"'
+            usePreparedStatements: true
+            columns:
+              - column:
+                  header: COUNTRY ISO2 CODE
+                  name: country_iso2
+                  type: varchar
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  header: COUNTRY NAME
+                  name: country_name
+                  type: varchar
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  header: SWIFT CODE
+                  name: swift_code
+                  type: skip
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  header: CODE TYPE
+                  name: unused1
+                  type: skip
+              - column:
+                  header: NAME
+                  name: unused2
+                  type: skip
+              - column:
+                  header: ADDRESS
+                  name: unused3
+                  type: skip
+              - column:
+                  header: TOWN NAME
+                  name: unused4
+                  type: skip
+              - column:
+                  header: TIME ZONE
+                  name: unused5
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused6
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused7
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused8
+                  type: skip

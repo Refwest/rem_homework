@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Filip
+      changes:
+        - createTable:
+            remarks: Added bank table
+            schemaName: public
+            tableName: bank
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: address
+                  type: varchar
+                  constraints:
+                    nullable: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    nullable: false
+#              - column:
+#                  name: is_headquarter
+#                  type: boolean
+#                  constraints:
+#                    nullable: false
+              - column:
+                  name: swift_code
+                  type: varchar
+                  constraints:
+                    nullable: false
+                    unique: true
+#              - column:
+#                  name: country_iso2
+#                  type: varchar
+#                  constraints:
+#                    nullable: false

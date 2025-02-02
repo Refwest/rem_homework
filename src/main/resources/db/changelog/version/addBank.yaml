@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Filip
+      changes:
+        - loadData:
+            schemaName: public
+            tableName: bank
+            file: ../data/Interns_2025_SWIFT_CODES.csv
+            relativeToChangelogFile: true
+            encoding: UTF-8
+            separator: ";"
+            quotchar: '"'
+            usePreparedStatements: true
+            columns:
+              - column:
+                  header: SWIFT CODE
+                  name: swift_code
+                  type: varchar
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  header: NAME
+                  name: name
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  header: ADDRESS
+                  name: address
+                  type: varchar
+                  nullPlaceholder: "  "
+                  constraints:
+                    nullable: false
+
+
+              - column:
+                  header: CODE TYPE
+                  name: unused1
+                  type: skip
+              - column:
+                  header: COUNTRY ISO2 CODE
+                  name: country_iso2
+                  type: skip
+              - column:
+                  header: COUNTRY NAME
+                  name: country_name
+                  type: skip
+              - column:
+                  header: TOWN NAME
+                  name: unused4
+                  type: skip
+              - column:
+                  header: TIME ZONE
+                  name: unused5
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused6
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused7
+                  type: skip
+              - column:
+                  header: ""
+                  name: unused8
+                  type: skip
+        - update:
+            schemaName: public
+            tableName: bank
+
