@@ -1,10 +1,9 @@
 databaseChangeLog:
   - changeSet:
-      id: 3
+      id: 1738504828337-3
       author: Filip
       changes:
         - loadUpdateData:
-            schemaName: public
             tableName: country
             primaryKey: country_iso2
             file: ../data/Interns_2025_SWIFT_CODES.csv
@@ -18,6 +17,7 @@ databaseChangeLog:
                   header: COUNTRY ISO2 CODE
                   name: country_iso2
                   type: varchar
+                  nullPlaceholder: "  "
                   constraints:
                     nullable: false
                     unique: true
@@ -25,6 +25,7 @@ databaseChangeLog:
                   header: COUNTRY NAME
                   name: country_name
                   type: varchar
+                  nullPlaceholder: "  "
                   constraints:
                     nullable: false
                     unique: true
@@ -68,3 +69,13 @@ databaseChangeLog:
                   header: ""
                   name: unused8
                   type: skip
+
+        - update:
+            tableName: country
+            columns:
+              - column:
+                  name: country_iso2
+                  valueComputed: TRIM(country_iso2)
+              - column:
+                  name: country_name
+                  valueComputed: TRIM(country_name)

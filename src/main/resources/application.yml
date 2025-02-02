@@ -16,4 +16,4 @@ spring:
       change-log: classpath:/db/changelog/db.changelog-master.yaml
       clear-checksums: true
       drop-first: true
-
+      default-schema: public

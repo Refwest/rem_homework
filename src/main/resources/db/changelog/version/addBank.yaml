@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 4
+      id: 1738504838208-4
       author: Filip
+      comment: add bank data from csv file and adjust it to database
       changes:
         - loadData:
-            schemaName: public
             tableName: bank
             file: ../data/Interns_2025_SWIFT_CODES.csv
             relativeToChangelogFile: true
@@ -17,13 +17,15 @@ databaseChangeLog:
                   header: SWIFT CODE
                   name: swift_code
                   type: varchar
+                  nullPlaceholder: "  "
                   constraints:
                     nullable: false
                     unique: true
               - column:
                   header: NAME
-                  name: name
+                  name: bank_name
                   type: varchar
+                  nullPlaceholder: "  "
                   constraints:
                     nullable: false
               - column:
@@ -33,15 +35,17 @@ databaseChangeLog:
                   nullPlaceholder: "  "
                   constraints:
                     nullable: false
-
+              - column:
+                  header: COUNTRY ISO2 CODE
+                  name: country_iso2
+                  type: varchar(2)
+                  nullPlaceholder: "  "
+                  constraints:
+                    nullable: false
 
               - column:
                   header: CODE TYPE
                   name: unused1
-                  type: skip
-              - column:
-                  header: COUNTRY ISO2 CODE
-                  name: country_iso2
                   type: skip
               - column:
                   header: COUNTRY NAME
@@ -67,7 +71,38 @@ databaseChangeLog:
                   header: ""
                   name: unused8
                   type: skip
-        - update:
-            schemaName: public
-            tableName: bank
 
+        - update:
+            tableName: bank
+            columns:
+              - column:
+                  name: address
+                  valueComputed: TRIM(address)
+              - column:
+                  name: bank_name
+                  valueComputed: TRIM(bank_name)
+              - column:
+                  name: swift_code
+                  valueComputed: TRIM(swift_code)
+              - column:
+                  name: country_iso2
+                  valueComputed: TRIM(country_iso2)
+              - column:
+                  name: is_headquarter
+                  valueBoolean: false
+
+        - update:
+            tableName: bank
+            columns:
+              - column:
+                  name: is_headquarter
+                  valueBoolean: true
+            where: swift_code LIKE '%XXX'
+
+        - update:
+            tableName: bank
+            columns:
+              - column:
+                  name: country_id
+                  valueComputed: country.id FROM country
+            where: bank.country_iso2 = country.country_iso2

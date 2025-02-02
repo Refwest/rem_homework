@@ -1,11 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 2
+      id: 1738504849457-2
       author: Filip
       changes:
         - createTable:
             remarks: Added bank table
-            schemaName: public
             tableName: bank
             columns:
               - column:
@@ -22,23 +21,28 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
-                  name: name
+                  name: bank_name
                   type: varchar
                   constraints:
                     nullable: false
-#              - column:
-#                  name: is_headquarter
-#                  type: boolean
-#                  constraints:
-#                    nullable: false
+              - column:
+                  name: is_headquarter
+                  type: boolean
               - column:
                   name: swift_code
-                  type: varchar
+                  type: varchar(11)
                   constraints:
                     nullable: false
                     unique: true
-#              - column:
-#                  name: country_iso2
-#                  type: varchar
-#                  constraints:
-#                    nullable: false
+              - column:
+                  name: country_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_bank_country
+                    referencedTableName: country
+                    referencedColumnNames: id
+              - column:
+                  name: country_iso2
+                  type: varchar(2)
+                  constraints:
+                    nullable: false
