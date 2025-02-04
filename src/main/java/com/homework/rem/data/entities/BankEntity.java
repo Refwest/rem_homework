@@ -18,5 +18,13 @@ public class BankEntity {
     private boolean isHeadquarter;
     private String swiftCode;
     private Long countryId;
+
+    public BankEntity(String address, String bankName, boolean isHeadquarter, String swiftCode, Long countryId) {
+        this.address = address;
+        this.bankName = bankName;
+        this.isHeadquarter = isHeadquarter;
+        this.swiftCode = swiftCode;
+        this.countryId = countryId;
+    }
 }
 

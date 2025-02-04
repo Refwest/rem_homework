@@ -5,8 +5,6 @@ import com.homework.rem.web.models.CountryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/swift-codes/country")

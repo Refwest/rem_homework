@@ -1,10 +1,10 @@
 package com.homework.rem.web.controllers;
 
 import com.homework.rem.service.BankService;
+import com.homework.rem.web.models.BankRequest;
 import com.homework.rem.web.models.BankResponse;
 import com.homework.rem.web.models.DeleteBankRequest;
-import com.homework.rem.web.models.DeleteBankResponse;
-import org.springframework.http.HttpStatus;
+import com.homework.rem.web.models.MessageResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +24,14 @@ public class BankController {
         return ResponseEntity.ok(bank);
     }
 
+    @PostMapping
+    public ResponseEntity<MessageResponse> createBank(@RequestBody BankRequest bankRequest) {
+        return ResponseEntity.ok(bankService.createBank(bankRequest));
+    }
+
     @DeleteMapping("/{swift-code}")
-    public ResponseEntity<DeleteBankResponse> removeBank(@PathVariable(name = "swift-code") String swiftCode, @RequestBody DeleteBankRequest deleteBankRequest) {
-        DeleteBankResponse message = bankService.deleteBank(swiftCode, deleteBankRequest);
-        return ResponseEntity.status(HttpStatus.GONE).body(message);
+    public ResponseEntity<MessageResponse> removeBank(@PathVariable(name = "swift-code") String swiftCode, @RequestBody DeleteBankRequest deleteBankRequest) {
+        MessageResponse message = bankService.deleteBank(swiftCode, deleteBankRequest);
+        return ResponseEntity.ok(message);
     }
 }

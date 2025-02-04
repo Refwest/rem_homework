@@ -5,11 +5,7 @@ import com.homework.rem.data.entities.CountryEntity;
 import com.homework.rem.data.repository.BankRepository;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
-import com.homework.rem.web.models.BankResponse;
-import com.homework.rem.web.models.BasicBankDetailsResponse;
-//import com.homework.rem.web.models.HeadquarterResponse;
-import com.homework.rem.web.models.DeleteBankRequest;
-import com.homework.rem.web.models.DeleteBankResponse;
+import com.homework.rem.web.models.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +18,17 @@ public class BankService {
 
     private final BankRepository bankRepository;
     private final CountryRepository countryRepository;
+    private final CountryService countryService;
 
-    public BankService(BankRepository bankRepository, CountryRepository countryRepository) {
+    public BankService(BankRepository bankRepository, CountryRepository countryRepository, CountryService countryService) {
         this.bankRepository = bankRepository;
         this.countryRepository = countryRepository;
+        this.countryService = countryService;
     }
 
     public BankResponse fetchBank(String swiftCode) {
-        BankEntity bankEntity = Optional.ofNullable(bankRepository.findBankEntityBySwiftCode(swiftCode)).orElseThrow(NotFoundException::new);
+        Optional<BankEntity> optionalBank = bankRepository.findBankEntityBySwiftCode(swiftCode);
+        BankEntity bankEntity = optionalBank.orElseThrow(NotFoundException::new);
         Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
         CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
         if (bankEntity.isHeadquarter()) {
@@ -43,8 +42,7 @@ public class BankService {
     public List<BasicBankDetailsResponse> fetchBranches(String headquarterSwiftCode) {
         if (headquarterSwiftCode.length() == 11) {
             String branchSwiftCodePrefix = headquarterSwiftCode.substring(0, headquarterSwiftCode.length() - 3) + '%';
-            System.out.println(branchSwiftCodePrefix);
-            return bankRepository.findAllBySwiftCodeIsLikeIgnoreCase(branchSwiftCodePrefix)
+            return bankRepository.findAllBySwiftCodeIsLikeIgnoreCaseAndSwiftCodeIsNot(branchSwiftCodePrefix, headquarterSwiftCode)
                     .stream()
                     .map(bankEntity -> {
                         Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
@@ -56,10 +54,24 @@ public class BankService {
     }
 
     @Transactional
-    public DeleteBankResponse deleteBank(String swiftCode, DeleteBankRequest deleteBankRequest) {
-        CountryEntity countryEntity = Optional.ofNullable(countryRepository.findByCountryIso2(deleteBankRequest.countryISO2())).orElseThrow(NotFoundException::new);
-        bankRepository.deleteBySwiftCodeAndBankNameAndCountryId(swiftCode, deleteBankRequest.bankName(), countryEntity.getId());
-        return new DeleteBankResponse("SWIFT code \"" + swiftCode + "\" data deleted");
+    public MessageResponse createBank(BankRequest bankRequest) {
+        BankEntity existingBank = bankRepository.findBankEntityBySwiftCode(bankRequest.swiftCode().toUpperCase()).orElse(null);
+        if (existingBank == null) {
+            CountryEntity countryEntity = countryService.createCountry(new CountryRequest(bankRequest));
+            BankEntity bankEntity = new BankEntity(bankRequest.address().toUpperCase(), bankRequest.bankName().toUpperCase(), bankRequest.isHeadquarter(), bankRequest.swiftCode().toUpperCase(), countryEntity.getId());
+            bankRepository.save(bankEntity);
+            return new MessageResponse("Bank facility created");
+        } else {
+            return new MessageResponse("Bank with this SWIFT code exists");
+        }
+    }
+
+    @Transactional
+    public MessageResponse deleteBank(String swiftCode, DeleteBankRequest deleteBankRequest) {
+        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2(deleteBankRequest.countryISO2());
+        Long countryId = optionalCountry.map(CountryEntity::getId).orElseThrow(NotFoundException::new);
+        bankRepository.deleteBySwiftCodeAndBankNameAndCountryId(swiftCode, deleteBankRequest.bankName(), countryId);
+        return new MessageResponse("SWIFT code \"" + swiftCode + "\" data deleted");
     }
 
 

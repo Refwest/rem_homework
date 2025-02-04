@@ -1,13 +1,14 @@
 package com.homework.rem.service;
 
-import com.homework.rem.data.entities.BankEntity;
 import com.homework.rem.data.entities.CountryEntity;
 import com.homework.rem.data.repository.BankRepository;
 import com.homework.rem.web.models.BasicBankDetailsResponse;
+import com.homework.rem.web.models.CountryRequest;
 import com.homework.rem.web.models.CountryResponse;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +25,23 @@ public class CountryService {
         this.bankRepository = bankRepository;
 
     }
+//        CountryEntity countryEntity = Optional.ofNullable(countryRepository.findByCountryIso2(countryIso2)).orElseThrow(NotFoundException::new);
 
     public CountryResponse fetchCountry(String countryIso2) {
-        CountryEntity countryEntity = Optional.ofNullable(countryRepository.findByCountryIso2(countryIso2)).orElseThrow(NotFoundException::new);
+        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2(countryIso2);
+        CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
         List<BasicBankDetailsResponse> banks = bankRepository.findAllByCountryId(countryEntity.getId()).stream().map(bankEntity -> new BasicBankDetailsResponse(bankEntity, countryEntity)).collect(Collectors.toList());
         return new CountryResponse(countryEntity, banks);
+    }
+
+    @Transactional
+    public CountryEntity createCountry(CountryRequest countryRequest) {
+        CountryEntity existingCountry = countryRepository.findByCountryIso2(countryRequest.countryISO2()).orElse(null);
+        if (existingCountry == null) {
+            CountryEntity countryEntity = new CountryEntity(countryRequest.countryISO2().toUpperCase(), countryRequest.countryName().toUpperCase());
+            return countryRepository.save(countryEntity);
+        } else {
+            return existingCountry;
+        }
     }
 }

@@ -5,13 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BankRepository extends JpaRepository<BankEntity, Long> {
 
-    BankEntity findBankEntityBySwiftCode(String branchSwiftCodePrefix);
+    Optional<BankEntity> findBankEntityBySwiftCode(String branchSwiftCodePrefix);
 
-    List<BankEntity> findAllBySwiftCodeIsLikeIgnoreCase(String swiftCode);
+    List<BankEntity> findAllBySwiftCodeIsLikeIgnoreCaseAndSwiftCodeIsNot(String branchSwiftCodePrefix, String HeadquarterSwiftCode);
 
     List<BankEntity> findAllByCountryId(Long countryId);
 
