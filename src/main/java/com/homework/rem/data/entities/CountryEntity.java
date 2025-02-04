@@ -13,6 +13,6 @@ public class CountryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String CountryIso2;
+    private String countryIso2;
     private String countryName;
 }

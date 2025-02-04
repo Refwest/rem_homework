@@ -6,4 +6,9 @@ databaseChangeLog:
       changes:
         - addNotNullConstraint:
             tableName: bank
-            columnName: country_iso2
+            columnName: country_id
+        - dropColumn:
+            tableName: bank
+            columns:
+              - column:
+                  name: country_iso2

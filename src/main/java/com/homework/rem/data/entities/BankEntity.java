@@ -15,7 +15,6 @@ public class BankEntity {
     private Long id;
     private String address;
     private String bankName;
-    private String countryIso2;
     private boolean isHeadquarter;
     private String swiftCode;
     private Long countryId;
