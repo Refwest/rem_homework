@@ -76,7 +76,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: country_iso2
-                  valueComputed: TRIM(country_iso2)
+                  valueComputed: UPPER(TRIM(country_iso2))
               - column:
                   name: country_name
-                  valueComputed: TRIM(country_name)
+                  valueComputed: UPPER(TRIM(country_name))
