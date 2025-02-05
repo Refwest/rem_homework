@@ -54,6 +54,25 @@ public class BankControllerIntegrationTest {
                 .andExpect(jsonPath("$", not(hasKey("branches"))));
     }
 
+
+    @Test
+    @DisplayName("GET /v1/swift-codes/country/{countryISO2code} returns a CountryResponse")
+    public void getCountry() throws Exception {
+
+        String countryISO2code = "PL";
+
+        mockMvc.perform(get("/v1/swift-codes/country/{countryISO2code}", countryISO2code))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countryISO2").exists())
+                .andExpect(jsonPath("$.countryName").exists())
+                .andExpect(jsonPath("$", hasKey("swiftCodes")))
+                .andExpect(jsonPath("$.swiftCodes[0]", hasKey("address")))
+                .andExpect(jsonPath("$.swiftCodes[0].bankName").exists())
+                .andExpect(jsonPath("$.swiftCodes[0].countryISO2").exists())
+                .andExpect(jsonPath("$.swiftCodes[0].isHeadquarter").exists())
+                .andExpect(jsonPath("$.swiftCodes[0].swiftCode").exists());
+    }
+
     @Test
     @DisplayName("POST /v1/swift-codes returns a MessageResponse")
     public void testCreateBank() throws Exception {

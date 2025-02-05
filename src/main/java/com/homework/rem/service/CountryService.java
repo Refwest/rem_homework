@@ -30,8 +30,8 @@ public class CountryService {
     public CountryResponse fetchCountry(String countryIso2) {
         Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2(countryIso2);
         CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
-        List<BasicBankDetailsResponse> banks = bankRepository.findAllByCountryId(countryEntity.getId()).stream().map(bankEntity -> new BasicBankDetailsResponse(bankEntity, countryEntity)).collect(Collectors.toList());
-        return new CountryResponse(countryEntity, banks);
+        List<BasicBankDetailsResponse> swiftCodes = bankRepository.findAllByCountryId(countryEntity.getId()).stream().map(bankEntity -> new BasicBankDetailsResponse(bankEntity, countryEntity)).collect(Collectors.toList());
+        return new CountryResponse(countryEntity, swiftCodes);
     }
 
     @Transactional
