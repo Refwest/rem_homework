@@ -6,6 +6,7 @@ import com.homework.rem.data.repository.BankRepository;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
 import com.homework.rem.web.models.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,10 +56,17 @@ public class BankService {
 
     @Transactional
     public MessageResponse createBank(BankRequest bankRequest) {
-        BankEntity existingBank = bankRepository.findBankEntityBySwiftCode(bankRequest.swiftCode().toUpperCase()).orElse(null);
+        BankRequest unicodeBankRequest = new BankRequest(
+                unicodeInput(bankRequest.address()),
+                unicodeInput(bankRequest.bankName()),
+                unicodeInput(bankRequest.countryISO2()),
+                unicodeInput(bankRequest.countryName()),
+                bankRequest.isHeadquarter(),
+                unicodeInput(bankRequest.swiftCode()));
+        BankEntity existingBank = bankRepository.findBankEntityBySwiftCode(unicodeBankRequest.swiftCode()).orElse(null);
         if (existingBank == null) {
-            CountryEntity countryEntity = countryService.createCountry(new CountryRequest(bankRequest));
-            BankEntity bankEntity = new BankEntity(bankRequest.address().toUpperCase(), bankRequest.bankName().toUpperCase(), bankRequest.isHeadquarter(), bankRequest.swiftCode().toUpperCase(), countryEntity.getId());
+            CountryEntity countryEntity = countryService.createCountry(new CountryRequest(unicodeBankRequest));
+            BankEntity bankEntity = new BankEntity(unicodeBankRequest.address(), unicodeBankRequest.bankName(), unicodeBankRequest.isHeadquarter(), unicodeBankRequest.swiftCode(), countryEntity.getId());
             bankRepository.save(bankEntity);
             return new MessageResponse("Bank facility created");
         } else {
@@ -72,6 +80,15 @@ public class BankService {
         Long countryId = optionalCountry.map(CountryEntity::getId).orElseThrow(NotFoundException::new);
         bankRepository.deleteBySwiftCodeAndBankNameAndCountryId(swiftCode, deleteBankRequest.bankName(), countryId);
         return new MessageResponse("SWIFT code \"" + swiftCode + "\" data deleted");
+    }
+
+
+    public String unicodeInput(String input) {
+        if (input == null) {
+            return null;
+        } else {
+            return StringUtils.stripAccents(input).toUpperCase();
+        }
     }
 
 

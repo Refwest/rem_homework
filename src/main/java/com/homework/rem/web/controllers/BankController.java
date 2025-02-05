@@ -5,6 +5,7 @@ import com.homework.rem.web.models.BankRequest;
 import com.homework.rem.web.models.BankResponse;
 import com.homework.rem.web.models.DeleteBankRequest;
 import com.homework.rem.web.models.MessageResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class BankController {
 
     @PostMapping
     public ResponseEntity<MessageResponse> createBank(@RequestBody BankRequest bankRequest) {
-        return ResponseEntity.ok(bankService.createBank(bankRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createBank(bankRequest));
     }
 
     @DeleteMapping("/{swift-code}")
