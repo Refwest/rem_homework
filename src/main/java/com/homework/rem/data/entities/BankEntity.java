@@ -1,6 +1,8 @@
 package com.homework.rem.data.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -14,8 +16,14 @@ public class BankEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String address;
+    @NotNull
+    @NotEmpty
     private String bankName;
+    @NotNull
+    @NotEmpty
     private boolean isHeadquarter;
+    @NotNull
+    @NotEmpty
     private String swiftCode;
     private Long countryId;
 

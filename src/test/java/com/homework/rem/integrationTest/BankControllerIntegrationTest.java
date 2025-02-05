@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.nullValue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -20,7 +20,7 @@ public class BankControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("GET /v1/swift-codes/{swift-code} returns a BankResponse - Headquarter")
+    @DisplayName("GET /v1/swift-codes/{swift-code} returns a BranchResponse - Headquarter")
     public void testGetBankHeadquarter() throws Exception {
         String swiftCode = "BCECCLRMXXX";
 
@@ -37,7 +37,7 @@ public class BankControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /v1/swift-codes/{swift-code} returns a BankResponse - Branch")
+    @DisplayName("GET /v1/swift-codes/{swift-code} returns a BranchResponse - Branch")
     public void testGetBankBranch() throws Exception {
 
         String swiftCode = "CITIPLPXBRO";
@@ -50,7 +50,8 @@ public class BankControllerIntegrationTest {
                 .andExpect(jsonPath("$.countryISO2").exists())
                 .andExpect(jsonPath("$.countryName").exists())
                 .andExpect(jsonPath("$.isHeadquarter").value(false))
-                .andExpect(jsonPath("$.swiftCode").value(swiftCode));
+                .andExpect(jsonPath("$.swiftCode").value(swiftCode))
+                .andExpect(jsonPath("$", not(hasKey("branches"))));
     }
 
     @Test

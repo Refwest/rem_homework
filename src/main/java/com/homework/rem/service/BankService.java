@@ -27,16 +27,16 @@ public class BankService {
         this.countryService = countryService;
     }
 
-    public BankResponse fetchBank(String swiftCode) {
+    public Bank fetchBank(String swiftCode) {
         Optional<BankEntity> optionalBank = bankRepository.findBankEntityBySwiftCode(swiftCode);
         BankEntity bankEntity = optionalBank.orElseThrow(NotFoundException::new);
         Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
         CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
         if (bankEntity.isHeadquarter()) {
             List<BasicBankDetailsResponse> branches = fetchBranches(swiftCode);
-            return new BankResponse(bankEntity, countryEntity, branches);
+            return new HeadquarterResponse(bankEntity, countryEntity, branches);
         } else {
-            return new BankResponse(bankEntity, countryEntity);
+            return new BranchResponse(bankEntity, countryEntity);
         }
     }
 
@@ -92,11 +92,11 @@ public class BankService {
     }
 
 
-    //    public BankResponse fetchBank(String swiftCode) {
+    //    public BranchResponse fetchBank(String swiftCode) {
 //        BankEntity bankEntity = Optional.ofNullable(bankRepository.findBankEntitiesBySwiftCode(swiftCode)).orElseThrow(NotFoundException::new);
 //        Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
 //        CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
-//        return new BankResponse(bankEntity, countryEntity);
+//        return new BranchResponse(bankEntity, countryEntity);
 //    }
 
 //
