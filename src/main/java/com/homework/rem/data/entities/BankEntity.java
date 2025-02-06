@@ -19,8 +19,6 @@ public class BankEntity {
     @NotNull
     @NotEmpty
     private String bankName;
-    @NotNull
-    @NotEmpty
     private boolean isHeadquarter;
     @NotNull
     @NotEmpty

@@ -5,6 +5,7 @@ import com.homework.rem.data.entities.CountryEntity;
 import com.homework.rem.data.repository.BankRepository;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
+import com.homework.rem.validators.ObjectValidator;
 import com.homework.rem.web.models.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ public class BankService {
     private final BankRepository bankRepository;
     private final CountryRepository countryRepository;
     private final CountryService countryService;
+    private final ObjectValidator<BankRequest> bankRequestObjectValidator;
 
-    public BankService(BankRepository bankRepository, CountryRepository countryRepository, CountryService countryService) {
+    public BankService(BankRepository bankRepository, CountryRepository countryRepository, CountryService countryService, ObjectValidator<BankRequest> bankRequestObjectValidator) {
         this.bankRepository = bankRepository;
         this.countryRepository = countryRepository;
         this.countryService = countryService;
+        this.bankRequestObjectValidator = bankRequestObjectValidator;
     }
 
     public Bank fetchBank(String swiftCode) {
@@ -56,21 +59,27 @@ public class BankService {
 
     @Transactional
     public MessageResponse createBank(BankRequest bankRequest) {
-        BankRequest unicodeBankRequest = new BankRequest(
-                unicodeInput(bankRequest.address()),
-                unicodeInput(bankRequest.bankName()),
-                unicodeInput(bankRequest.countryISO2()),
-                unicodeInput(bankRequest.countryName()),
-                bankRequest.isHeadquarter(),
-                unicodeInput(bankRequest.swiftCode()));
-        BankEntity existingBank = bankRepository.findBankEntityBySwiftCode(unicodeBankRequest.swiftCode()).orElse(null);
-        if (existingBank == null) {
-            CountryEntity countryEntity = countryService.createCountry(new CountryRequest(unicodeBankRequest));
-            BankEntity bankEntity = new BankEntity(unicodeBankRequest.address(), unicodeBankRequest.bankName(), unicodeBankRequest.isHeadquarter(), unicodeBankRequest.swiftCode(), countryEntity.getId());
-            bankRepository.save(bankEntity);
-            return new MessageResponse("Bank facility created");
+        var violations = bankRequestObjectValidator.validate(bankRequest);
+
+        if (!violations.isEmpty()) {
+            return new MessageResponse(String.join("\n", violations));
         } else {
-            return new MessageResponse("Bank with this SWIFT code exists");
+            BankRequest unicodeBankRequest = new BankRequest(
+                    unicodeInput(bankRequest.address()),
+                    unicodeInput(bankRequest.bankName()),
+                    unicodeInput(bankRequest.countryISO2()),
+                    unicodeInput(bankRequest.countryName()),
+                    bankRequest.isHeadquarter(),
+                    unicodeInput(bankRequest.swiftCode()));
+            BankEntity existingBank = bankRepository.findBankEntityBySwiftCode(unicodeBankRequest.swiftCode()).orElse(null);
+            if (existingBank == null) {
+                CountryEntity countryEntity = countryService.createCountry(new CountryRequest(unicodeBankRequest));
+                BankEntity bankEntity = new BankEntity(unicodeBankRequest.address(), unicodeBankRequest.bankName(), unicodeBankRequest.isHeadquarter(), unicodeBankRequest.swiftCode(), countryEntity.getId());
+                bankRepository.save(bankEntity);
+                return new MessageResponse("Bank facility created");
+            } else {
+                return new MessageResponse("Bank with this SWIFT code exists");
+            }
         }
     }
 
@@ -90,31 +99,5 @@ public class BankService {
             return StringUtils.stripAccents(input).toUpperCase();
         }
     }
-
-
-    //    public BranchResponse fetchBank(String swiftCode) {
-//        BankEntity bankEntity = Optional.ofNullable(bankRepository.findBankEntitiesBySwiftCode(swiftCode)).orElseThrow(NotFoundException::new);
-//        Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
-//        CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
-//        return new BranchResponse(bankEntity, countryEntity);
-//    }
-
-//
-//    public HeadquarterResponse fetchHeadquarter(String headquarterSwiftCode) {
-//        BankEntity bankEntity = Optional.ofNullable(bankRepository.findBankEntitiesBySwiftCode(headquarterSwiftCode)).orElseThrow(NotFoundException::new);
-//        Optional<CountryEntity> optionalCountry = countryRepository.findById(bankEntity.getCountryId());
-//        CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
-//        List<BasicBankDetailsResponse> branches = fetchBranches(headquarterSwiftCode);
-//        return new HeadquarterResponse(bankEntity, countryEntity, branches);
-//    }
-
-//    public void classifyBank(String swiftCode) {
-//        if (swiftCode.get) {
-//            fetchHeadquarter(swiftCode);
-//        } else {
-//            fetchBank(swiftCode);
-//        }
-//    }
-
 
 }
