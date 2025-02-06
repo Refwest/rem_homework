@@ -17,3 +17,5 @@ spring:
       clear-checksums: true
       drop-first: true
       default-schema: public
+server:
+  port: 8080
