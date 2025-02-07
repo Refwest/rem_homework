@@ -11,7 +11,19 @@ environment configuration or management.
 
 All endpoints are accessible at http://localhost:8080.
 
-API Endpoints
+
+
+Start app using docker-compose (path has to be set inside main project directory where docker-compose.yml file 
+is located):
+docker-compose up --build
+
+Start app tests:
+docker-compose --profile test up --build
+
+
+
+
+API Endpoints:
 1. Retrieve SWIFT Code Details
    Endpoint:
    GET /v1/swift-codes/{swift-code}

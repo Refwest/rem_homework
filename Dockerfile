@@ -1,6 +1,5 @@
 FROM gradle:8.2.1-jdk17 AS build
 
-
 WORKDIR /home/gradle/project
 COPY --chown=gradle:gradle gradlew .
 COPY --chown=gradle:gradle gradle gradle

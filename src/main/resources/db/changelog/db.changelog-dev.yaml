@@ -8,3 +8,9 @@ databaseChangeLog:
   - include:
       file: version/addCountry.yaml
       relativeToChangelogFile: true
+  - include:
+      file: version/addBank.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: version/unableNullFKBank.yaml
+      relativeToChangelogFile: true
