@@ -1,4 +1,4 @@
-version: '3.9'  # Profiles require version 3.9 or above
+version: '3.9'
 
 services:
   postgres:
@@ -30,7 +30,7 @@ services:
     depends_on:
       - postgres
 
-  # The test service is assigned to the 'test' profile.
+
   app_test:
     image: gradle:8.2.1-jdk17
     container_name: springboot_test
