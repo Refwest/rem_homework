@@ -85,7 +85,7 @@ public class BankService {
 
     @Transactional
     public MessageResponse deleteBank(String swiftCode, DeleteBankRequest deleteBankRequest) {
-        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2Optional(deleteBankRequest.countryISO2());
+        Optional<CountryEntity> optionalCountry = countryRepository.findOptionalByCountryIso2(deleteBankRequest.countryISO2());
         Long countryId = optionalCountry.map(CountryEntity::getId).orElseThrow(NotFoundException::new);
         bankRepository.deleteBySwiftCodeAndBankNameAndCountryId(swiftCode, deleteBankRequest.bankName(), countryId);
         return new MessageResponse("SWIFT code \"" + swiftCode + "\" data deleted");
