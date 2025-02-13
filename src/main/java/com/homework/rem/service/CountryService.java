@@ -9,6 +9,7 @@ import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import static com.homework.rem.service.AdjustVariables.unicodeInput;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,6 @@ public class CountryService {
         this.bankRepository = bankRepository;
 
     }
-//        CountryEntity countryEntity = Optional.ofNullable(countryRepository.findByCountryIso2(countryIso2)).orElseThrow(NotFoundException::new);
 
     public CountryResponse fetchCountry(String countryIso2) {
         Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2Optional(countryIso2);
@@ -36,9 +36,12 @@ public class CountryService {
 
     @Transactional
     public CountryEntity createCountry(CountryRequest countryRequest) {
-        CountryEntity existingCountry = countryRepository.findByCountryIso2(countryRequest.countryISO2());
+        String countryIso2 = unicodeInput(countryRequest.countryISO2());
+        String countryName = unicodeInput(countryRequest.countryName());
+        CountryEntity existingCountry = countryRepository.findByCountryIso2(countryIso2);
+
         if (existingCountry == null) {
-            CountryEntity countryEntity = new CountryEntity(countryRequest.countryISO2().toUpperCase(), countryRequest.countryName().toUpperCase());
+            CountryEntity countryEntity = new CountryEntity(countryIso2, countryName);
             return countryRepository.save(countryEntity);
         } else {
             return existingCountry;
