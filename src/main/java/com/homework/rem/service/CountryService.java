@@ -7,6 +7,7 @@ import com.homework.rem.web.models.CountryRequest;
 import com.homework.rem.web.models.CountryResponse;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class CountryService {
 //        CountryEntity countryEntity = Optional.ofNullable(countryRepository.findByCountryIso2(countryIso2)).orElseThrow(NotFoundException::new);
 
     public CountryResponse fetchCountry(String countryIso2) {
-        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2(countryIso2);
+        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2Optional(countryIso2);
         CountryEntity countryEntity = optionalCountry.orElseThrow(NotFoundException::new);
         List<BasicBankDetailsResponse> swiftCodes = bankRepository.findAllByCountryId(countryEntity.getId()).stream().map(bankEntity -> new BasicBankDetailsResponse(bankEntity, countryEntity)).collect(Collectors.toList());
         return new CountryResponse(countryEntity, swiftCodes);
@@ -36,12 +37,20 @@ public class CountryService {
 
     @Transactional
     public CountryEntity createCountry(CountryRequest countryRequest) {
-        CountryEntity existingCountry = countryRepository.findByCountryIso2(countryRequest.countryISO2()).orElse(null);
+        CountryEntity existingCountry = countryRepository.findByCountryIso2(countryRequest.countryISO2());
         if (existingCountry == null) {
             CountryEntity countryEntity = new CountryEntity(countryRequest.countryISO2().toUpperCase(), countryRequest.countryName().toUpperCase());
             return countryRepository.save(countryEntity);
         } else {
             return existingCountry;
+        }
+    }
+
+    public String unicodeInput(String input) {
+        if (input == null) {
+            return null;
+        } else {
+            return StringUtils.stripAccents(input).toUpperCase();
         }
     }
 }
