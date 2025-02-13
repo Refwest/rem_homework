@@ -7,13 +7,13 @@ import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
 import com.homework.rem.validators.ObjectValidator;
 import com.homework.rem.web.models.*;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static com.homework.rem.service.AdjustVariables.unicodeInput;
 
 @Service
 public class BankService {
@@ -85,19 +85,10 @@ public class BankService {
 
     @Transactional
     public MessageResponse deleteBank(String swiftCode, DeleteBankRequest deleteBankRequest) {
-        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2(deleteBankRequest.countryISO2());
+        Optional<CountryEntity> optionalCountry = countryRepository.findByCountryIso2Optional(deleteBankRequest.countryISO2());
         Long countryId = optionalCountry.map(CountryEntity::getId).orElseThrow(NotFoundException::new);
         bankRepository.deleteBySwiftCodeAndBankNameAndCountryId(swiftCode, deleteBankRequest.bankName(), countryId);
         return new MessageResponse("SWIFT code \"" + swiftCode + "\" data deleted");
-    }
-
-
-    public String unicodeInput(String input) {
-        if (input == null) {
-            return null;
-        } else {
-            return StringUtils.stripAccents(input).toUpperCase();
-        }
     }
 
 }

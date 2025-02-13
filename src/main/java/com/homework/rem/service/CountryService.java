@@ -7,7 +7,6 @@ import com.homework.rem.web.models.CountryRequest;
 import com.homework.rem.web.models.CountryResponse;
 import com.homework.rem.data.repository.CountryRepository;
 import com.homework.rem.service.exception.NotFoundException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,11 +45,4 @@ public class CountryService {
         }
     }
 
-    public String unicodeInput(String input) {
-        if (input == null) {
-            return null;
-        } else {
-            return StringUtils.stripAccents(input).toUpperCase();
-        }
-    }
 }
